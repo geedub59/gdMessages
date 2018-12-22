@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" href="img/_gd_favicon.png" type="image/png" />
+
+  <title>gdMessages</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+    crossorigin="anonymous" />
+  <link rel='stylesheet' href='css/gdMessages.css' />
+  <link rel='stylesheet' href='index.css' />
+
+</head>
+
+<body>
+
+  <div id="messageSelections">
+    <span>Message Type: </span>
+    <select name="type" id="msgtype">
+      <option value="notify" selected>Notification</option>
+      <option value="confirm">Confirmation</option>
+      <option value="dialog">Dialog</option>
+    </select>
+    <span id="ntLabel">Notification Type: </span>
+    <select name="notificationtype" id="notifytype">
+      <option value="success" selected>Success</option>
+      <option value="info">Information</option>
+      <option value="warning">Warning</option>
+      <option value="error">Error</option>
+    </select>
+    <span>Screen Position: </span>
+    <select name="position" id="msgposition">
+      <option value="top left">Top Left</option>
+      <option value="top centre">Top Centre</option>
+      <option value="top right" selected>Top Right</option>
+      <option value="centre">Centre</option>
+      <option value="bottom left">Bottom Left</option>
+      <option value="bottom centre">Bottom Centre</option>
+      <option value="bottom right">Bottom Right</option>
+    </select>
+    <span>Message Box Width: </span>
+    <select name="width" id="msgwidth">
+      <option value="300px" selected>300px</option>
+      <option value="40%">40 percent</option>
+      <option value="auto">Auto</option>
+    </select>
+    <span>Animated Display: </span>
+    <select name="animation" id="msganimation">
+      <option value="true" selected>Animated</option>
+      <option value="false">Not Animated</option>
+    </select>
+
+  </div>
+  <div id="dispSel">
+    <button id="msgSelDisplay" class="btn btn-primary">Display</button>
+  </div>
+
+  <scripts>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+      crossorigin="anonymous"></script>
+    <script src="js/gdMessages.js"></script>
+    <script src="index.js"></script>
+  </scripts>
+
+</body>
+
+</html>
