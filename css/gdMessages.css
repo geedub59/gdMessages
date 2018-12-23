@@ -1,4 +1,11 @@
-/* gdNotify */
+/*-------------------------------------------------------------------------------------------
+// gdMessages v1.0.0 2018-12-23
+// @license Copyright 2018, geedub59, License: MIT, see https://github.com/geedub59/gdMessages/  
+--------------------------------------------------------------------------------------------*/
+
+/*-----------------------------------
+  gdNotify
+------------------------------------*/
 
 #gd-backdrop {
   position: absolute;
@@ -129,7 +136,9 @@
   margin: 8px 0px;
 }
 
-/* gd-confirm */
+/*-----------------------------------
+  gdConfirm
+------------------------------------*/
 
 #gd-confirm {
   position: absolute;
@@ -240,7 +249,9 @@
   padding-bottom: 3px;
 }
 
-/* gd-dialog */
+/*-----------------------------------
+  gdDialog
+------------------------------------*/
 
 #gd-dialog {
   position: absolute;
@@ -363,6 +374,10 @@
   padding-top: 3px;
   padding-bottom: 3px;
 }
+
+/*-----------------------------------
+  Animations
+------------------------------------*/
 
 .gd-slideInRight {
   animation-name: gdSlideRight;
@@ -536,22 +551,9 @@
   }
 }
 
-/* @keyframes gdSlideDown {
-  0% {
-    top: -10px;
-    -webkit-transform: translate(-50%, -50%) scale(0.3) translate3d(0, -100%, 0);
-    transform: translate(-50%, -50%) scale(0.3) translate3d(0, -100%, 0);
-    opacity: 0;
-    visibility: visible;
-  }
-  100% {
-    top: 10px;
-    -webkit-transform: translate(-50%, -50%) scale(1) translate3d(0, 0, 0);
-    transform: translate(-50%, -50%) scale(1) translate3d(0, 0, 0);
-    opacity: 1;
-    visibility: visible;
-  }
-} */
+/*-----------------------------------
+  css for sample form
+------------------------------------*/
 
 .btn {
   font-size: 0.9rem;

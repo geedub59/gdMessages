@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------------------------------------
+// gdMessages v1.0.0 2018-12-23
+// @license Copyright 2018, geedub59, License: MIT, see https://github.com/geedub59/gdMessages/ 
+// ---------------------------------------------------------------------------------------------
+
 var gdMessages = {
 
     msgInPlay: false,
@@ -67,19 +72,13 @@ var gdMessages = {
 
         options = $.extend(true, defaults, options);
 
-        var notifyHtml = '<div id="gd-notify">\
+        var $notifyHtml = $('<div id="gd-notify">\
                                 <div id="gd-notify-inner">\
                                   <div id="gd-notify-header"></div>\
                                   <hr>\
                                   <div id="gd-notify-body"></div>\
                                 </div>\
-                              </div>';
-        $("body").append(notifyHtml);
-
-        var $gdNotify = $('#gd-notify');
-        var $gdNotifyInner = $('#gd-notify-inner');
-        var $gdNotifyHeader = $('#gd-notify-header');
-        var $gdNotifyBody = $('#gd-notify-body');
+                              </div>');
 
         var position = "bottomright";
         var dir = "right";
@@ -179,16 +178,16 @@ var gdMessages = {
                 break;
         }
 
-        $gdNotifyInner.addClass(typeClasses);
+        $notifyHtml.find('#gd-notify-inner').addClass(typeClasses);
 
         if (options.title == "") {
-            $gdNotifyHeader.html(typeIcon + "&nbsp;&nbsp;&nbsp;Notification");
+            $notifyHtml.find('#gd-notify-header').html(typeIcon + "&nbsp;&nbsp;&nbsp;Notification");
         } else {
-            $gdNotifyHeader.html(typeIcon + "&nbsp;&nbsp;&nbsp;" + options.title);
+            $notifyHtml.find('#gd-notify-header').html(typeIcon + "&nbsp;&nbsp;&nbsp;" + options.title);
         }
-        $gdNotifyBody.html(options.msg);
+        $notifyHtml.find('#gd-notify-body').html(options.msg);
 
-        $gdNotify.css({
+        $notifyHtml.css({
             "width": options.width,
             "z-index": gdMessages.maxZ() + 1
         });
@@ -199,6 +198,9 @@ var gdMessages = {
         }
 
         // Show the notification
+        $("body").append($notifyHtml);
+        var $gdNotify = $('#gd-notify');
+
         if (options.animation) {
             if (gdMessages.resetBO) {
                 $("body").css("overflow", "hidden")
@@ -331,23 +333,16 @@ var gdMessages = {
                 $backdropHtml.addClass("gd-fadeIn");
             }
             $("body").append($backdropHtml);
-            // var $gdBackdrop = $("#gd-backdrop");
         }
 
-        var confirmHtml = '<div id="gd-confirm">\
+        var $confirmHtml = $('<div id="gd-confirm">\
                               <div id="gd-confirm-inner">\
                                   <div id="gd-exit"><span><i class="fas fa-times"></i><span></div>\
                                   <div id="gd-confirm-msg"></div>\
                                   <hr>\
                                   <div id="gd-confirm-buttons"></div>\
                               </div>\
-                          </div>';
-        $("body").append(confirmHtml);
-
-        var $gdConfirm = $('#gd-confirm');
-        var $gdConfirmInner = $('#gd-confirm-inner');
-        var $gdConfirmMsg = $('#gd-confirm-msg');
-        var $gdConfirmButtons = $('#gd-confirm-buttons');
+                          </div>');
 
         var position = "centre";
         var dir = "centre";
@@ -428,27 +423,31 @@ var gdMessages = {
 
         var typeClasses = options.className;
 
-        $gdConfirmInner.addClass(typeClasses);
+        $confirmHtml.find('#gd-confirm-inner').addClass(typeClasses);
 
-        $gdConfirmMsg.html(options.msg);
+        $confirmHtml.find('#gd-confirm-msg').html(options.msg);
 
         var otherButton = "";
         if (options.otherBtn != false) {
             otherButton = ' <button class="' + options.otherBtn.className + ' gd-other">' + options.otherBtn.label + '</button>';
         }
-        $gdConfirmButtons.html('<button class="' + options.cancelBtn.className + ' gd-cancel">' + options.cancelBtn.label + '</button>\
+        $confirmHtml.find('#gd-confirm-buttons').html('<button class="' + options.cancelBtn.className + ' gd-cancel">' + options.cancelBtn.label + '</button>\
                                <button class="' + options.okBtn.className + ' gd-ok">' + options.okBtn.label + '</button>' + otherButton);
 
-        $gdConfirm.css({
+        $confirmHtml.css({
             "width": options.width,
             "z-index": zIndex + 1
         });
+
         gdMessages.bodyOverflow = $("body").css("overflow");
         if (dir == "right" || dir == "left" || dir == "bottomcentre") {
             gdMessages.resetBO = true;
         }
 
         // Show the Confirmation
+        $("body").append($confirmHtml);
+        var $gdConfirm = $('#gd-confirm');
+
         if (options.animation) {
             if (gdMessages.resetBO) {
                 $("body").css("overflow", "hidden")
@@ -616,10 +615,9 @@ var gdMessages = {
                 $backdropHtml.addClass("gd-fadeIn");
             }
             $("body").append($backdropHtml);
-            // var $gdBackdrop = $("#gd-backdrop");
         }
 
-        var dialogHtml = '<div id="gd-dialog">\
+        var $dialogHtml = $('<div id="gd-dialog">\
                               <div id="gd-dialog-inner">\
                                   <div id="gd-exit"><span><i class="fas fa-times"></i><span></div>\
                                   <div id="gd-dialog-title"></div>\
@@ -628,14 +626,7 @@ var gdMessages = {
                                   <hr>\
                                   <div id="gd-dialog-buttons"></div>\
                               </div>\
-                          </div>';
-        $("body").append(dialogHtml);
-
-        var $gdDialog = $('#gd-dialog');
-        var $gdDialogInner = $('#gd-dialog-inner');
-        var $gdDialogTitle = $('#gd-dialog-title');
-        var $gdDialogMsg = $('#gd-dialog-msg');
-        var $gdDialogButtons = $('#gd-dialog-buttons');
+                          </div>');
 
         var position = "centre";
         var dir = "centre";
@@ -716,20 +707,20 @@ var gdMessages = {
 
         var typeClasses = options.className;
 
-        $gdDialogInner.addClass(typeClasses);
+        $dialogHtml.find('#gd-dialog-inner').addClass(typeClasses);
 
-        $gdDialogTitle.html(options.title);
+        $dialogHtml.find('#gd-dialog-title').html(options.title);
 
-        $gdDialogMsg.html(options.msg);
+        $dialogHtml.find('#gd-dialog-msg').html(options.msg);
 
         var otherButton = "";
         if (options.otherBtn != false) {
             otherButton = ' <button class="' + options.otherBtn.className + ' gd-other">' + options.otherBtn.label + '</button>';
         }
-        $gdDialogButtons.html('<button class="' + options.cancelBtn.className + ' gd-cancel">' + options.cancelBtn.label + '</button>\
+        $dialogHtml.find('#gd-dialog-buttons').html('<button class="' + options.cancelBtn.className + ' gd-cancel">' + options.cancelBtn.label + '</button>\
                                <button class="' + options.okBtn.className + ' gd-ok">' + options.okBtn.label + '</button>' + otherButton);
 
-        $gdDialog.css({
+        $dialogHtml.css({
             "width": options.width,
             "z-index": zIndex + 1
         });
@@ -737,6 +728,10 @@ var gdMessages = {
         if (dir == "right" || dir == "left" || dir == "bottomcentre") {
             gdMessages.resetBO = true;
         }
+
+        // Show the dialog
+        $("body").append($dialogHtml);
+        var $gdDialog = $('#gd-dialog');
 
         if (options.animation) {
             if (dir == "right" || dir == "left") {

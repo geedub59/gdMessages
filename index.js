@@ -115,11 +115,11 @@ $(document).ready(function () {
           width: width,
           position: position,
           animation: animation,
-          closeAfter:
-          {
-            time: 6,
-            resetOnHover: false
-          },
+          closeAfter: false,
+          // {
+          //   time: 6,
+          //   resetOnHover: false
+          // },
           afterClose: function (result) {
             switch (result) {
               case "ok":
