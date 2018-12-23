@@ -115,7 +115,11 @@ $(document).ready(function () {
           width: width,
           position: position,
           animation: animation,
-          closeAfter: false,
+          closeAfter:
+          {
+            time: 6,
+            resetOnHover: false
+          },
           afterClose: function (result) {
             switch (result) {
               case "ok":
@@ -193,6 +197,8 @@ $(document).ready(function () {
                 });
                 break;
               case "cancel":               // do the cancel processing
+                console.log($data);
+
                 gdMessages.notify({
                   msg: "You clicked Cancel",
                   closeAfter: {
@@ -228,6 +234,21 @@ $(document).ready(function () {
           }
         });
         break;
+    }
+  });
+
+  // on an excape keypress get rid of any open modal dialogs and accessories
+  $(document).on("keydown", function (jsEvent) {
+    if (jsEvent.keyCode == 27) {
+      if ($("#gd-notify").length) {
+        gdMessages.closeNotify();
+      }
+      if ($("#gd-confirm").length) {
+        gdMessages.closeConfirm();
+      }
+      if ($("#gd-dialog").length) {
+        gdMessages.closeDialog();
+      }
     }
   });
 

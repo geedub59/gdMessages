@@ -1,12 +1,22 @@
 var gdMessages = {
 
-    MsgInPlay: false,
-    notifyTimer: null,
-    confirmTimer: null,
+    msgInPlay: false,
+
+    notifyTimer: 0,
+    notifyOptions: null,
+
+    confirmTimer: 0,
+    confirmOptions: null,
+
+    dialogTimer: 0,
+    dialogOptions: null,
+
     aniClassesOut: "",
+    bodyOverflow: "",
+    resetBO: false,
 
     maxZ: function () {
-        zindex = Math.max.apply(null,
+        var zindex = Math.max.apply(null,
             $.map($('body *'), function (e, n) {
                 if ($(e).css('position') != 'static')
                     return parseInt($(e).css('z-index')) || 1;
@@ -20,10 +30,10 @@ var gdMessages = {
 
     notify: function (options) {
 
-        if (gdMessages.MsgInPlay) {
+        if (gdMessages.msgInPlay) {
             return;
         } else {
-            gdMessages.MsgInPlay = true;
+            gdMessages.msgInPlay = true;
         }
 
         var defaults = {
@@ -104,26 +114,28 @@ var gdMessages = {
                 break;
         }
 
+        var aniClassesIn = "gd-slideInLeft";
+        var aniClassesOut = "gd-slideOutLeft";
         switch (dir) {
             case "left":
-                var aniClassesIn = "gd-slideInLeft";
-                var aniClassesOut = "gd-slideOutLeft";
+                aniClassesIn = "gd-slideInLeft";
+                aniClassesOut = "gd-slideOutLeft";
                 break;
             case "right":
-                var aniClassesIn = "gd-slideInRight";
-                var aniClassesOut = "gd-slideOutRight";
+                aniClassesIn = "gd-slideInRight";
+                aniClassesOut = "gd-slideOutRight";
                 break;
             case "centre":
-                var aniClassesIn = "gd-fadezoomIn";
-                var aniClassesOut = "gd-fadezoomOut";
+                aniClassesIn = "gd-fadezoomIn";
+                aniClassesOut = "gd-fadezoomOut";
                 break;
             case "topcentre":
-                var aniClassesIn = "gd-slideInDown";
-                var aniClassesOut = "gd-slideOutUp";
+                aniClassesIn = "gd-slideInDown";
+                aniClassesOut = "gd-slideOutUp";
                 break;
             case "bottomcentre":
-                var aniClassesIn = "gd-slideInUp";
-                var aniClassesOut = "gd-slideOutDown";
+                aniClassesIn = "gd-slideInUp";
+                aniClassesOut = "gd-slideOutDown";
                 break;
         }
         gdMessages.aniClassesOut = aniClassesOut;
@@ -143,6 +155,8 @@ var gdMessages = {
             }
         }
         options.closeAfter.resetOnHover = resetOnHover;
+
+        gdMessages.notifyOptions = options;
 
         var typeClasses = "";
         var typeIcon = "";
@@ -179,32 +193,34 @@ var gdMessages = {
             "z-index": gdMessages.maxZ() + 1
         });
 
-        var curBodyOverflow = $("body").css("overflow");
+        gdMessages.bodyOverflow = $("body").css("overflow");
+        if (dir == "right" || dir == "left" || dir == "bottomcentre") {
+            gdMessages.resetBO = true;
+        }
 
+        // Show the notification
         if (options.animation) {
-            if (dir == "right" || dir == "left" || dir == "bottomcentre") {
+            if (gdMessages.resetBO) {
                 $("body").css("overflow", "hidden")
             }
             $gdNotify.addClass(position)
                 .addClass(aniClassesIn)
                 .one("animationend", function () {
                     $(this).css("visibility", "visible").removeClass(aniClassesIn);
-                    postShowNotify(curBodyOverflow);
+                    postShowNotify();
                 });
         } else {
             $gdNotify.addClass(position).css("visibility", "visible");
-            postShowNotify(curBodyOverflow);
+            postShowNotify();
         }
 
-        function postShowNotify(curBodyOverflow) {
+        function postShowNotify() {
             $('#gd-notify').on("click", function () {
-                clearInterval(gdMessages.notifyTimer);
-                removeNotify(curBodyOverflow);
+                removeNotify();
             });
             if (pause > 0) {
                 gdMessages.notifyTimer = setInterval(function () {
-                    clearInterval(gdMessages.notifyTimer);
-                    removeNotify(curBodyOverflow);
+                    removeNotify();
                 }, pause);
                 if (options.closeAfter.resetOnHover) {
                     $('#gd-notify').hover(
@@ -213,8 +229,7 @@ var gdMessages = {
                         },
                         function () {
                             gdMessages.notifyTimer = setInterval(function () {
-                                clearInterval(gdMessages.notifyTimer);
-                                removeNotify(curBodyOverflow);
+                                removeNotify();
                             }, pause);
                         }
                     );
@@ -222,33 +237,58 @@ var gdMessages = {
             }
         }
 
-        function removeNotify(curBodyOverflow) {
+        function removeNotify() {
+            clearInterval(gdMessages.notifyTimer);
             if (options.animation) {
-                $('#gd-notify').addClass(aniClassesOut).one("animationend", function () {
+                $('#gd-notify').addClass(gdMessages.aniClassesOut).one("animationend", function () {
                     $(this).remove();
-                    gdMessages.MsgInPlay = false;
-                    if (dir == "right" || dir == "left" || dir == "bottomcentre") {
-                        $("body").css("overflow", curBodyOverflow)
+                    gdMessages.msgInPlay = false;
+                    if (gdMessages.resetBO) {
+                        $("body").css("overflow", gdMessages.bodyOverflow)
+                    }
+                    if (typeof options.afterClose === "function") {
+                        options.afterClose();
                     }
                 });
             } else {
                 $('#gd-notify').remove();
-                gdMessages.MsgInPlay = false;
-                // if (dir == "right" || dir == "left" || dir == "bottomcentre") {
-                //     $("body").css("overflow", curBodyOverflow)
-                // }
+                gdMessages.msgInPlay = false;
+                if (typeof options.afterClose === "function") {
+                    options.afterClose();
+                }
             }
-            if (typeof options.afterClose === "function") options.afterClose();
         }
 
     },
 
+    closeNotify: function () {
+        clearInterval(gdMessages.notifyTimer);
+        if (gdMessages.notifyOptions.animation) {
+            $('#gd-notify').addClass(gdMessages.aniClassesOut).one("animationend", function () {
+                $(this).remove();
+                gdMessages.msgInPlay = false;
+                if (gdMessages.resetBO) {
+                    $("body").css("overflow", gdMessages.bodyOverflow)
+                }
+                if (typeof gdMessages.notifyOptions.afterClose === "function") {
+                    gdMessages.notifyOptions.afterClose();
+                }
+            });
+        } else {
+            $('#gd-notify').remove();
+            gdMessages.msgInPlay = false;
+            if (typeof gdMessages.notifyOptions.afterClose === "function") {
+                gdMessages.notifyOptions.afterClose();
+            }
+        }
+    },
+
     confirm: function (options) {
 
-        if (gdMessages.MsgInPlay) {
+        if (gdMessages.msgInPlay) {
             return;
         } else {
-            gdMessages.MsgInPlay = true;
+            gdMessages.msgInPlay = true;
         }
 
         var defaults = {
@@ -342,26 +382,28 @@ var gdMessages = {
                 break;
         }
 
+        var aniClassesIn = "gd-slideInLeft";
+        var aniClassesOut = "gd-slideOutLeft";
         switch (dir) {
             case "left":
-                var aniClassesIn = "gd-slideInLeft";
-                var aniClassesOut = "gd-slideOutLeft";
+                aniClassesIn = "gd-slideInLeft";
+                aniClassesOut = "gd-slideOutLeft";
                 break;
             case "right":
-                var aniClassesIn = "gd-slideInRight";
-                var aniClassesOut = "gd-slideOutRight";
+                aniClassesIn = "gd-slideInRight";
+                aniClassesOut = "gd-slideOutRight";
                 break;
             case "centre":
-                var aniClassesIn = "gd-fadezoomIn";
-                var aniClassesOut = "gd-fadezoomOut";
+                aniClassesIn = "gd-fadezoomIn";
+                aniClassesOut = "gd-fadezoomOut";
                 break;
             case "topcentre":
-                var aniClassesIn = "gd-slideInDown";
-                var aniClassesOut = "gd-slideOutUp";
+                aniClassesIn = "gd-slideInDown";
+                aniClassesOut = "gd-slideOutUp";
                 break;
             case "bottomcentre":
-                var aniClassesIn = "gd-slideInUp";
-                var aniClassesOut = "gd-slideOutDown";
+                aniClassesIn = "gd-slideInUp";
+                aniClassesOut = "gd-slideOutDown";
                 break;
         }
         gdMessages.aniClassesOut = aniClassesOut;
@@ -382,6 +424,8 @@ var gdMessages = {
         }
         options.closeAfter.resetOnHover = resetOnHover;
 
+        gdMessages.confirmOptions = options;
+
         var typeClasses = options.className;
 
         $gdConfirmInner.addClass(typeClasses);
@@ -399,10 +443,14 @@ var gdMessages = {
             "width": options.width,
             "z-index": zIndex + 1
         });
-        var curBodyOverflow = $("body").css("overflow");
+        gdMessages.bodyOverflow = $("body").css("overflow");
+        if (dir == "right" || dir == "left" || dir == "bottomcentre") {
+            gdMessages.resetBO = true;
+        }
 
+        // Show the Confirmation
         if (options.animation) {
-            if (dir == "right" || dir == "left" || dir == "bottomcentre") {
+            if (gdMessages.resetBO) {
                 $("body").css("overflow", "hidden")
             }
             $gdConfirm.addClass(position)
@@ -410,37 +458,32 @@ var gdMessages = {
                 .addClass(aniClassesIn)
                 .one("animationend", function () {
                     $(this).removeClass(aniClassesIn);
-                    postShowConfirm(curBodyOverflow);
+                    postShowConfirm();
                 });
         } else {
             $gdConfirm.addClass(position).css("visibility", "visible");
-            postShowConfirm(curBodyOverflow);
+            postShowConfirm();
         }
 
-        function postShowConfirm(curBodyOverflow) {
+        function postShowConfirm() {
             $(".gd-ok").on("click", function () {
                 if (typeof options.beforeClose === "function") {
                     if (options.beforeClose()) {
-                        clearInterval(gdMessages.confirmTimer);
-                        removeConfirm("ok", curBodyOverflow);
+                        removeConfirm("ok");
                     }
                 } else {
-                    clearInterval(gdMessages.confirmTimer);
-                    removeConfirm("ok", curBodyOverflow);
+                    removeConfirm("ok");
                 }
             });
             $("#gd-exit, .gd-cancel").on("click", function () {
-                clearInterval(gdMessages.confirmTimer);
-                removeConfirm("cancel", curBodyOverflow);
+                removeConfirm("cancel");
             });
             $(".gd-other").on("click", function () {
-                clearInterval(gdMessages.confirmTimer);
-                removeConfirm("other", curBodyOverflow);
+                removeConfirm("other");
             });
             if (pause > 0) {
                 gdMessages.confirmTimer = setInterval(function () {
-                    clearInterval(gdMessages.confirmTimer);
-                    removeConfirm("timeout", curBodyOverflow);
+                    removeConfirm("timeout");
                 }, pause);
                 if (options.closeAfter.resetOnHover) {
                     $(this).hover(
@@ -449,8 +492,7 @@ var gdMessages = {
                         },
                         function () {
                             gdMessages.confirmTimer = setInterval(function () {
-                                clearInterval(gdMessages.confirmTimer);
-                                removeConfirm("timeout", curBodyOverflow);
+                                removeConfirm("timeout");
                             }, pause);
                         }
                     );
@@ -458,41 +500,79 @@ var gdMessages = {
             }
         }
 
-        function removeConfirm(retMsg, curBodyOverflow) {
+        function removeConfirm(retMsg) {
+            clearInterval(gdMessages.confirmTimer);
             if (options.animation) {
                 if (options.backdrop) {
                     $("#gd-backdrop").removeClass("gd-fadeIn");
                 }
-                $('#gd-confirm').addClass(aniClassesOut).one("animationend", function () {
-                    $('#gd-confirm').remove();
+                $('#gd-confirm').addClass(gdMessages.aniClassesOut).one("animationend", function () {
+                    $(this).remove();
                     if (options.backdrop) {
                         $("#gd-backdrop").addClass("gd-fadeOutQuickly").one("animationend", function () {
                             $("#gd-backdrop").remove();
                         });
                     }
-                    gdMessages.MsgInPlay = false;
-                    if (dir == "right" || dir == "left" || dir == "bottomcentre") {
-                        $("body").css("overflow", curBodyOverflow)
+                    gdMessages.msgInPlay = false;
+                    if (gdMessages.resetBO) {
+                        $("body").css("overflow", gdMessages.bodyOverflow)
                     }
-                    if (typeof options.afterClose === "function") options.afterClose(retMsg);
+                    if (typeof options.afterClose === "function") {
+                        options.afterClose(retMsg);
+                    }
                 });
             } else {
                 $('#gd-confirm').remove();
                 if (options.backdrop) {
                     $("#gd-backdrop").remove();
                 }
-                gdMessages.MsgInPlay = false;
-                if (typeof options.afterClose === "function") options.afterClose(retMsg);
+                gdMessages.msgInPlay = false;
+                if (typeof options.afterClose === "function") {
+                    options.afterClose(retMsg);
+                }
+            }
+        }
+    },
+
+    closeConfirm: function () {
+        clearInterval(gdMessages.confirmTimer);
+        if (gdMessages.confirmOptions.animation) {
+            if (gdMessages.confirmOptions.backdrop) {
+                $("#gd-backdrop").removeClass("gd-fadeIn");
+            }
+            $('#gd-confirm').addClass(gdMessages.aniClassesOut).one("animationend", function () {
+                $(this).remove();
+                if (gdMessages.confirmOptions.backdrop) {
+                    $("#gd-backdrop").addClass("gd-fadeOutQuickly").one("animationend", function () {
+                        $("#gd-backdrop").remove();
+                    });
+                }
+                gdMessages.msgInPlay = false;
+                if (gdMessages.resetBO) {
+                    $("body").css("overflow", gdMessages.bodyOverflow)
+                }
+                if (typeof gdMessages.confirmOptions.afterClose === "function") {
+                    gdMessages.confirmOptions.afterClose("cancel");
+                }
+            });
+        } else {
+            $('#gd-confirm').remove();
+            if (gdMessages.confirmOptions.backdrop) {
+                $("#gd-backdrop").remove();
+            }
+            gdMessages.msgInPlay = false;
+            if (typeof gdMessages.confirmOptions.afterClose === "function") {
+                gdMessages.confirmOptions.afterClose("cancel");
             }
         }
     },
 
     dialog: function (options) {
 
-        if (gdMessages.MsgInPlay) {
+        if (gdMessages.msgInPlay) {
             return;
         } else {
-            gdMessages.MsgInPlay = true;
+            gdMessages.msgInPlay = true;
         }
 
         var defaults = {
@@ -590,26 +670,28 @@ var gdMessages = {
                 break;
         }
 
+        var aniClassesIn = "gd-slideInLeft";
+        var aniClassesOut = "gd-slideOutLeft";
         switch (dir) {
             case "left":
-                var aniClassesIn = "gd-slideInLeft";
-                var aniClassesOut = "gd-slideOutLeft";
+                aniClassesIn = "gd-slideInLeft";
+                aniClassesOut = "gd-slideOutLeft";
                 break;
             case "right":
-                var aniClassesIn = "gd-slideInRight";
-                var aniClassesOut = "gd-slideOutRight";
+                aniClassesIn = "gd-slideInRight";
+                aniClassesOut = "gd-slideOutRight";
                 break;
             case "centre":
-                var aniClassesIn = "gd-fadezoomIn";
-                var aniClassesOut = "gd-fadezoomOut";
+                aniClassesIn = "gd-fadezoomIn";
+                aniClassesOut = "gd-fadezoomOut";
                 break;
             case "topcentre":
-                var aniClassesIn = "gd-slideInDown";
-                var aniClassesOut = "gd-slideOutUp";
+                aniClassesIn = "gd-slideInDown";
+                aniClassesOut = "gd-slideOutUp";
                 break;
             case "bottomcentre":
-                var aniClassesIn = "gd-slideInUp";
-                var aniClassesOut = "gd-slideOutDown";
+                aniClassesIn = "gd-slideInUp";
+                aniClassesOut = "gd-slideOutDown";
                 break;
         }
         gdMessages.aniClassesOut = aniClassesOut;
@@ -628,6 +710,9 @@ var gdMessages = {
                 resetOnHover = options.closeAfter.resetOnHover;
             }
         }
+        options.closeAfter.resetOnHover = resetOnHover;
+
+        gdMessages.dialogOptions = options;
 
         var typeClasses = options.className;
 
@@ -648,7 +733,10 @@ var gdMessages = {
             "width": options.width,
             "z-index": zIndex + 1
         });
-        var curBodyOverflow = $("body").css("overflow");
+        gdMessages.bodyOverflow = $("body").css("overflow");
+        if (dir == "right" || dir == "left" || dir == "bottomcentre") {
+            gdMessages.resetBO = true;
+        }
 
         if (options.animation) {
             if (dir == "right" || dir == "left") {
@@ -659,38 +747,38 @@ var gdMessages = {
                 .addClass(aniClassesIn)
                 .one("animationend", function () {
                     $(this).removeClass(aniClassesIn);
-                    postShowDialog(curBodyOverflow);
+                    postShowDialog();
                 });
         } else {
             $gdDialog.addClass(position).css("visibility", "visible");
-            postShowDialog(curBodyOverflow);
+            postShowDialog();
         }
 
 
-        function postShowDialog(curBodyOverflow) {
+        function postShowDialog() {
             $(".gd-ok").on("click", function () {
                 if (typeof options.beforeClose === "function") {
                     if (options.beforeClose()) {
                         clearInterval(gdMessages.dialogTimer);
-                        removeDialog("ok", $(options.returnSelector).clone(true), curBodyOverflow);
+                        removeDialog("ok", $(options.returnSelector).clone(true));
                     }
                 } else {
                     clearInterval(gdMessages.dialogTimer);
-                    removeDialog("ok", $(options.returnSelector).clone(true), curBodyOverflow);
+                    removeDialog("ok", $(options.returnSelector).clone(true));
                 }
             });
             $("#gd-exit, .gd-cancel").on("click", function () {
                 clearInterval(gdMessages.dialogTimer);
-                removeDialog("cancel", $(options.returnSelector).clone(true), curBodyOverflow);
+                removeDialog("cancel", $(options.returnSelector).clone(true));
             });
             $(".gd-other").on("click", function () {
                 clearInterval(gdMessages.dialogTimer);
-                removeDialog("other", $(options.returnSelector).clone(true), curBodyOverflow);
+                removeDialog("other", $(options.returnSelector).clone(true));
             });
             if (pause > 0) {
                 gdMessages.dialogTimer = setInterval(function () {
                     clearInterval(gdMessages.dialogTimer);
-                    removeDialog("timeout", $(options.returnSelector).clone(true), curBodyOverflow);
+                    removeDialog("timeout", $(options.returnSelector).clone(true));
                 }, pause);
                 if (options.closeAfter.resetOnHover) {
                     $(this).hover(
@@ -700,7 +788,7 @@ var gdMessages = {
                         function () {
                             gdMessages.dialogTimer = setInterval(function () {
                                 clearInterval(gdMessages.dialogTimer);
-                                removeDialog("timeout", $(options.returnSelector).clone(true), curBodyOverflow);
+                                removeDialog("timeout", $(options.returnSelector).clone(true));
                             }, pause);
                         }
                     );
@@ -709,7 +797,7 @@ var gdMessages = {
                             clearInterval(gdMessages.dialogTimer);
                             gdMessages.dialogTimer = setInterval(function () {
                                 clearInterval(gdMessages.dialogTimer);
-                                removeDialog("timeout", $(options.returnSelector).clone(true), curBodyOverflow);
+                                removeDialog("timeout", $(options.returnSelector).clone(true));
                             }, pause);
                         }
                     );
@@ -717,21 +805,21 @@ var gdMessages = {
             }
         }
 
-        function removeDialog(retMsg, $data, curBodyOverflow) {
+        function removeDialog(retMsg, $data) {
             if (options.animation) {
                 if (options.backdrop) {
                     $("#gd-backdrop").removeClass("gd-fadeIn");
                 }
-                $('#gd-dialog').addClass(aniClassesOut).one("animationend", function () {
+                $('#gd-dialog').addClass(gdMessages.aniClassesOut).one("animationend", function () {
                     $('#gd-dialog').remove();
                     if (options.backdrop) {
                         $("#gd-backdrop").addClass("gd-fadeOutQuickly").one("animationend", function () {
                             $("#gd-backdrop").remove();
                         });
                     }
-                    gdMessages.MsgInPlay = false;
+                    gdMessages.msgInPlay = false;
                     if (dir == "right" || dir == "left") {
-                        $("body").css("overflow", curBodyOverflow);
+                        $("body").css("overflow", gdMessages.bodyOverflow);
                     }
                     if (typeof options.afterClose === "function") options.afterClose(retMsg, $data);
                 });
@@ -740,11 +828,44 @@ var gdMessages = {
                 if (options.backdrop) {
                     $("#gd-backdrop").remove();
                 }
-                gdMessages.MsgInPlay = false;
+                gdMessages.msgInPlay = false;
                 if (typeof options.afterClose === "function") options.afterClose(retMsg, $data);
             }
         }
 
+    },
+
+    closeDialog: function () {
+        var $data = $(gdMessages.dialogOptions.returnSelector).clone(true);
+        if (gdMessages.dialogOptions.animation) {
+            if (gdMessages.dialogOptions.backdrop) {
+                $("#gd-backdrop").removeClass("gd-fadeIn");
+            }
+            $('#gd-dialog').addClass(gdMessages.aniClassesOut).one("animationend", function () {
+                $('#gd-dialog').remove();
+                if (gdMessages.dialogOptions.backdrop) {
+                    $("#gd-backdrop").addClass("gd-fadeOutQuickly").one("animationend", function () {
+                        $("#gd-backdrop").remove();
+                    });
+                }
+                gdMessages.msgInPlay = false;
+                if (gdMessages.resetBO) {
+                    $("body").css("overflow", gdMessages.bodyOverflow);
+                }
+                if (typeof gdMessages.dialogOptions.afterClose === "function") {
+                    gdMessages.dialogOptions.afterClose("cancel", $data);
+                }
+            });
+        } else {
+            $('#gd-dialog').remove();
+            if (gdMessages.dialogOptions.backdrop) {
+                $("#gd-backdrop").remove();
+            }
+            gdMessages.msgInPlay = false;
+            if (typeof gdMessages.dialogOptions.afterClose === "function") {
+                gdMessages.dialogOptions.afterClose("cancel", $data);
+            }
+        }
     }
 
 }
