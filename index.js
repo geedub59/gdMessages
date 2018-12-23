@@ -237,7 +237,7 @@ $(document).ready(function () {
     }
   });
 
-  // on an excape keypress get rid of any open modal dialogs and accessories
+  // on an excape keypress get rid of any open messages
   $(document).on("keydown", function (jsEvent) {
     if (jsEvent.keyCode == 27) {
       if ($("#gd-notify").length) {

@@ -6,6 +6,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  justify-content: space-between;
 }
 
 .btn {
@@ -22,11 +23,26 @@ body {
   display: inline-block;
 }
 
+#messageSelections {
+  flex: 1 1 0%;
+  padding: 5px;
+}
+
 #messageSelections select {
   margin: 2px 2px;
   padding: 2px 2px;
 }
 
+#dispSel {
+  flex: 1 1 5%;
+  padding: 5px;
+}
+
 #dispSel #msgSelDisplay {
-  margin-left: 10px;
+  width: 95%;
+}
+
+.code {
+  background-color: #fff;
+  flex: 1 1 auto;
 }
