@@ -17,7 +17,7 @@
 }
 
 #gd-notify {
-  position: absolute;
+  position: fixed;
   display: flex;
   padding: 0px 10px 0px 10px;
   height: auto;
@@ -49,21 +49,21 @@
 }
 
 #gd-notify.centre {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
 #gd-notify.topcentre {
-  position: absolute;
+  position: fixed;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 #gd-notify.bottomcentre {
-  position: absolute;
+  position: fixed;
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);

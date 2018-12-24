@@ -69,23 +69,12 @@ gdMessages v1.0.0 2018-12-23
     <pre>
         $(document).ready(function () {
         
-          $("#msgtype").on("change", function () {
-            if ($("#msgtype option:selected").val() == "notify") {
-              $("#notifytype").css("display", "inline-block")
-              $("#ntLabel").css("display", "inline-block")
-            } else {
-              $("#notifytype").css("display", "none")
-              $("#ntLabel").css("display", "none")
-            }
-          });
-        
           $("#msgSelDisplay").on("click", function () {
             var msgtype = "";
             var notifytype = "";
             var position = "";
             var width = "auto";
             var animation = true;
-        
             msgtype = $("#msgtype option:selected").val();
             if (msgtype == "notify") {
               notifytype = $("#notifytype option:selected").val();
@@ -94,9 +83,8 @@ gdMessages v1.0.0 2018-12-23
             width = $("#msgwidth option:selected").val();
             animation = ($("#msganimation option:selected").val() == "true");
         
-            var d = new Date();
-        
             switch (msgtype) {
+              
               case "notify":
                 gdMessages.notify({
                   msg: 'Record has been updated',
@@ -196,8 +184,6 @@ gdMessages v1.0.0 2018-12-23
                         });
                         break;
                       case "cancel":               // do the cancel processing
-                        console.log($data);
-        
                         gdMessages.notify({
                           msg: "You clicked Cancel",
                           closeAfter: {
@@ -237,6 +223,7 @@ gdMessages v1.0.0 2018-12-23
           });
         
           // on an escape keypress get rid of any open messages
+
           $(document).on("keydown", function (jsEvent) {
             if (jsEvent.keyCode == 27) {
               if ($("#gd-notify").length) {
@@ -252,7 +239,6 @@ gdMessages v1.0.0 2018-12-23
           });
         
           function gdFormValidation() {
-            console.log('Validating');
             $data = $("#gd-simple-event-bf");
             var $form = $data.find(".form");
             var title = $form.find("#title").val();
@@ -261,13 +247,18 @@ gdMessages v1.0.0 2018-12-23
             var endDate = $form.find("#gd-end-date").val();
             var endTime = $form.find("#gd-end-time").val();
             var desc = $form.find("#desc").val();
-            console.log(title);
-            console.log(startDate);
-            console.log(startTime);
-            console.log(endDate);
-            console.log(endTime);
-            console.log(desc);
+            // Validation code goes here
             return true;
+          }
+        });
+        
+        $("#msgtype").on("change", function () {
+          if ($("#msgtype option:selected").val() == "notify") {
+            $("#notifytype").css("display", "inline-block")
+            $("#ntLabel").css("display", "inline-block")
+          } else {
+            $("#notifytype").css("display", "none")
+            $("#ntLabel").css("display", "none")
           }
         });
 

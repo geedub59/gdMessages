@@ -202,9 +202,6 @@ var gdMessages = {
         var $gdNotify = $('#gd-notify');
 
         if (options.animation) {
-            if (gdMessages.resetBO) {
-                $("body").css("overflow", "hidden")
-            }
             $gdNotify.addClass(position)
                 .addClass(aniClassesIn)
                 .one("animationend", function () {
@@ -221,16 +218,16 @@ var gdMessages = {
                 removeNotify();
             });
             if (pause > 0) {
-                gdMessages.notifyTimer = setInterval(function () {
+                gdMessages.notifyTimer = setTimeout(function () {
                     removeNotify();
                 }, pause);
                 if (options.closeAfter.resetOnHover) {
                     $('#gd-notify').hover(
                         function () {
-                            clearInterval(gdMessages.notifyTimer);
+                            clearTimeout(gdMessages.notifyTimer);
                         },
                         function () {
-                            gdMessages.notifyTimer = setInterval(function () {
+                            gdMessages.notifyTimer = setTimeout(function () {
                                 removeNotify();
                             }, pause);
                         }
@@ -240,14 +237,11 @@ var gdMessages = {
         }
 
         function removeNotify() {
-            clearInterval(gdMessages.notifyTimer);
+            clearTimeout(gdMessages.notifyTimer);
             if (options.animation) {
                 $('#gd-notify').addClass(gdMessages.aniClassesOut).one("animationend", function () {
                     $(this).remove();
                     gdMessages.msgInPlay = false;
-                    if (gdMessages.resetBO) {
-                        $("body").css("overflow", gdMessages.bodyOverflow)
-                    }
                     if (typeof options.afterClose === "function") {
                         options.afterClose();
                     }
@@ -264,14 +258,11 @@ var gdMessages = {
     },
 
     closeNotify: function () {
-        clearInterval(gdMessages.notifyTimer);
+        clearTimeout(gdMessages.notifyTimer);
         if (gdMessages.notifyOptions.animation) {
             $('#gd-notify').addClass(gdMessages.aniClassesOut).one("animationend", function () {
                 $(this).remove();
                 gdMessages.msgInPlay = false;
-                if (gdMessages.resetBO) {
-                    $("body").css("overflow", gdMessages.bodyOverflow)
-                }
                 if (typeof gdMessages.notifyOptions.afterClose === "function") {
                     gdMessages.notifyOptions.afterClose();
                 }
@@ -481,16 +472,16 @@ var gdMessages = {
                 removeConfirm("other");
             });
             if (pause > 0) {
-                gdMessages.confirmTimer = setInterval(function () {
+                gdMessages.confirmTimer = setTimeout(function () {
                     removeConfirm("timeout");
                 }, pause);
                 if (options.closeAfter.resetOnHover) {
                     $(this).hover(
                         function () {
-                            clearInterval(gdMessages.confirmTimer);
+                            clearTimeout(gdMessages.confirmTimer);
                         },
                         function () {
-                            gdMessages.confirmTimer = setInterval(function () {
+                            gdMessages.confirmTimer = setTimeout(function () {
                                 removeConfirm("timeout");
                             }, pause);
                         }
@@ -500,7 +491,7 @@ var gdMessages = {
         }
 
         function removeConfirm(retMsg) {
-            clearInterval(gdMessages.confirmTimer);
+            clearTimeout(gdMessages.confirmTimer);
             if (options.animation) {
                 if (options.backdrop) {
                     $("#gd-backdrop").removeClass("gd-fadeIn");
@@ -534,7 +525,7 @@ var gdMessages = {
     },
 
     closeConfirm: function () {
-        clearInterval(gdMessages.confirmTimer);
+        clearTimeout(gdMessages.confirmTimer);
         if (gdMessages.confirmOptions.animation) {
             if (gdMessages.confirmOptions.backdrop) {
                 $("#gd-backdrop").removeClass("gd-fadeIn");
@@ -734,7 +725,7 @@ var gdMessages = {
         var $gdDialog = $('#gd-dialog');
 
         if (options.animation) {
-            if (dir == "right" || dir == "left") {
+            if (gdMessages.resetBO) {
                 $("body").css("overflow", "hidden")
             }
             $gdDialog.addClass(position)
@@ -754,44 +745,44 @@ var gdMessages = {
             $(".gd-ok").on("click", function () {
                 if (typeof options.beforeClose === "function") {
                     if (options.beforeClose()) {
-                        clearInterval(gdMessages.dialogTimer);
+                        clearTimeout(gdMessages.dialogTimer);
                         removeDialog("ok", $(options.returnSelector).clone(true));
                     }
                 } else {
-                    clearInterval(gdMessages.dialogTimer);
+                    clearTimeout(gdMessages.dialogTimer);
                     removeDialog("ok", $(options.returnSelector).clone(true));
                 }
             });
             $("#gd-exit, .gd-cancel").on("click", function () {
-                clearInterval(gdMessages.dialogTimer);
+                clearTimeout(gdMessages.dialogTimer);
                 removeDialog("cancel", $(options.returnSelector).clone(true));
             });
             $(".gd-other").on("click", function () {
-                clearInterval(gdMessages.dialogTimer);
+                clearTimeout(gdMessages.dialogTimer);
                 removeDialog("other", $(options.returnSelector).clone(true));
             });
             if (pause > 0) {
-                gdMessages.dialogTimer = setInterval(function () {
-                    clearInterval(gdMessages.dialogTimer);
+                gdMessages.dialogTimer = setTimeout(function () {
+                    clearTimeout(gdMessages.dialogTimer);
                     removeDialog("timeout", $(options.returnSelector).clone(true));
                 }, pause);
                 if (options.closeAfter.resetOnHover) {
                     $(this).hover(
                         function () {
-                            clearInterval(gdMessages.dialogTimer);
+                            clearTimeout(gdMessages.dialogTimer);
                         },
                         function () {
-                            gdMessages.dialogTimer = setInterval(function () {
-                                clearInterval(gdMessages.dialogTimer);
+                            gdMessages.dialogTimer = setTimeout(function () {
+                                clearTimeout(gdMessages.dialogTimer);
                                 removeDialog("timeout", $(options.returnSelector).clone(true));
                             }, pause);
                         }
                     );
                     $(this).keypress(
                         function () {
-                            clearInterval(gdMessages.dialogTimer);
-                            gdMessages.dialogTimer = setInterval(function () {
-                                clearInterval(gdMessages.dialogTimer);
+                            clearTimeout(gdMessages.dialogTimer);
+                            gdMessages.dialogTimer = setTimeout(function () {
+                                clearTimeout(gdMessages.dialogTimer);
                                 removeDialog("timeout", $(options.returnSelector).clone(true));
                             }, pause);
                         }
@@ -813,7 +804,7 @@ var gdMessages = {
                         });
                     }
                     gdMessages.msgInPlay = false;
-                    if (dir == "right" || dir == "left") {
+                    if (gdMessages.resetBO) {
                         $("body").css("overflow", gdMessages.bodyOverflow);
                     }
                     if (typeof options.afterClose === "function") options.afterClose(retMsg, $data);
