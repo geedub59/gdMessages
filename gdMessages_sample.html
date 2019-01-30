@@ -17,8 +17,8 @@ gdMessages v1.0.0 2018-12-23
     crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
     crossorigin="anonymous" />
-  <link rel='stylesheet' href='css/gdMessages.css' />
-  <link rel='stylesheet' href='index.css' />
+  <link rel='stylesheet' href='gdMessages.css' />
+  <link rel='stylesheet' href='gdMessages_sample.css' />
 
 </head>
 
@@ -50,7 +50,7 @@ gdMessages v1.0.0 2018-12-23
     </select>
     <span>Message Box Width: </span>
     <select name="width" id="msgwidth">
-      <option value="300px" selected>300px</option>
+      <option value="600px" selected>600px</option>
       <option value="40%">40 percent</option>
       <option value="auto">Auto</option>
     </select>
@@ -59,10 +59,16 @@ gdMessages v1.0.0 2018-12-23
       <option value="true" selected>Animated</option>
       <option value="false">Not Animated</option>
     </select>
+    <span>Play Audio: </span>
+    <select name="audio" id="msgaudio">
+      <option value="true" selected>Play Audio</option>
+      <option value="false">No Audio</option>
+    </select>
+    <button id="msgSelDisplay" class="btn btn-primary">Display</button>
 
   </div>
   <div id="dispSel">
-    <button id="msgSelDisplay" class="btn btn-primary">Display</button>
+    <!-- <button id="msgSelDisplay" class="btn btn-primary">Display</button> -->
   </div>
 
   <div class="code">
@@ -75,6 +81,7 @@ gdMessages v1.0.0 2018-12-23
             var position = "";
             var width = "auto";
             var animation = true;
+            var audio = true;
             msgtype = $("#msgtype option:selected").val();
             if (msgtype == "notify") {
               notifytype = $("#notifytype option:selected").val();
@@ -82,21 +89,23 @@ gdMessages v1.0.0 2018-12-23
             position = $("#msgposition option:selected").val();
             width = $("#msgwidth option:selected").val();
             animation = ($("#msganimation option:selected").val() == "true");
-        
+            audio = ($("#msgaudio option:selected").val() == "true");
+
             switch (msgtype) {
               
               case "notify":
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: 'Record has been updated',
                   className: notifytype,
                   width: width,
                   position: position,
-                  animation: animation
+                  animation: animation,
+                  audio: audio
                 });
                 break;
         
               case "confirm":
-                gdMessages.confirm({
+                gdMessages.confirm.open({
                   msg: 'Record has been updated',
                   className: 'stdconfirm',
                   width: width,
@@ -110,7 +119,7 @@ gdMessages v1.0.0 2018-12-23
                   afterClose: function (result) {
                     switch (result) {
                       case "ok":
-                        gdMessages.notify({
+                        gdMessages.notify.open({
                           msg: "You clicked OK",
                           closeAfter: {
                             time: 3,
@@ -121,7 +130,7 @@ gdMessages v1.0.0 2018-12-23
                         });
                         break;
                       case "cancel":
-                        gdMessages.notify({
+                        gdMessages.notify.open({
                           msg: "You clicked Cancel",
                           closeAfter: {
                             time: 3,
@@ -132,7 +141,7 @@ gdMessages v1.0.0 2018-12-23
                         });
                         break;
                       case "other":
-                        gdMessages.notify({
+                        gdMessages.notify.open({
                           msg: "You clicked Other",
                           closeAfter: {
                             time: 3,
@@ -143,7 +152,7 @@ gdMessages v1.0.0 2018-12-23
                         });
                         break;
                       default:
-                        gdMessages.notify({
+                        gdMessages.notify.open({
                           msg: "Request for Confirmation timed out!",
                           closeAfter: {
                             time: 5,
@@ -158,10 +167,10 @@ gdMessages v1.0.0 2018-12-23
                 break;
         
               case "dialog":
-                gdMessages.dialog({
+                gdMessages.dialog.open({
                   title: "Contractor Details",
                   msg: frmCalEvent,
-                  returnSelector: "#gd-simple-event-bf",
+                  returnSelector: "#gd-cal-event",
                   width: width,
                   position: position,
                   animation: animation,
@@ -173,7 +182,7 @@ gdMessages v1.0.0 2018-12-23
                   afterClose: function (result, $data) {
                     switch (result) {
                       case "ok":                   // do the OK/Save processing
-                        gdMessages.notify({
+                        gdMessages.notify.open({
                           msg: "You clicked OK - record saved",
                           closeAfter: {
                             time: 3,
@@ -184,7 +193,7 @@ gdMessages v1.0.0 2018-12-23
                         });
                         break;
                       case "cancel":               // do the cancel processing
-                        gdMessages.notify({
+                        gdMessages.notify.open({
                           msg: "You clicked Cancel",
                           closeAfter: {
                             time: 3,
@@ -195,7 +204,7 @@ gdMessages v1.0.0 2018-12-23
                         });
                         break;
                       case "other":                // do the custom alternative processing
-                        gdMessages.notify({
+                        gdMessages.notify.open({
                           msg: "You clicked Save Copy",
                           closeAfter: {
                             time: 3,
@@ -206,7 +215,7 @@ gdMessages v1.0.0 2018-12-23
                         });
                         break;
                       default:
-                        gdMessages.notify({
+                        gdMessages.notify.open({
                           msg: "You took too long, so I closed!",
                           closeAfter: {
                             time: 5,
@@ -227,19 +236,19 @@ gdMessages v1.0.0 2018-12-23
           $(document).on("keydown", function (jsEvent) {
             if (jsEvent.keyCode == 27) {
               if ($("#gd-notify").length) {
-                gdMessages.closeNotify();
+                gdMessages.notify.close();
               }
               if ($("#gd-confirm").length) {
-                gdMessages.closeConfirm();
+                gdMessages.confirm.close();
               }
               if ($("#gd-dialog").length) {
-                gdMessages.closeDialog();
+                gdMessages.dialog.close();
               }
             }
           });
         
           function gdFormValidation() {
-            $data = $("#gd-simple-event-bf");
+            $data = $("#gd-cal-event");
             var $form = $data.find(".form");
             var title = $form.find("#title").val();
             var startDate = $form.find("#gd-start-date").val();
@@ -263,7 +272,7 @@ gdMessages v1.0.0 2018-12-23
         });
 
         var frmCalEvent = '\
-        &ltdiv id="gd-simple-event-bf"&gt\
+        &ltdiv id="gd-cal-event"&gt\
         &ltdiv class="modal-body"&gt\
           &ltdiv class="container py-1"&gt\
             &ltdiv class="row"&gt\
@@ -337,8 +346,8 @@ gdMessages v1.0.0 2018-12-23
 
   <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
     crossorigin="anonymous"></script>
-  <script src="js/gdMessages.js"></script>
-  <script src="index.js"></script>
+  <script src="gdMessages.js"></script>
+  <script src="gdMessages_sample.js"></script>
 
 </body>
 

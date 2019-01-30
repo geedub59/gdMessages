@@ -4,17 +4,94 @@
 --------------------------------------------------------------------------------------------*/
 
 /*-----------------------------------
-  gdNotify
+  gdPopup
 ------------------------------------*/
 
-#gd-backdrop {
+#gd-popup {
   position: absolute;
+  display: flex;
+  padding: 0px 10px 0px 10px;
+  height: auto;
+  width: auto;
+  font-size: 1rem;
+  z-index: 333;
+  visibility: hidden;
+}
+
+#gd-popup-message {
+  top: 0px;
+  position: relative;
+}
+
+#gd-popup.coords {
+  position: absolute;
+}
+
+#gd-popup.topright {
+  right: 0px;
+  top: 5px;
+}
+
+#gd-popup.bottomright {
+  right: 0px;
+  bottom: 10px;
+}
+
+#gd-popup.topleft {
+  left: 0px;
+  top: 5px;
+}
+
+#gd-popup.bottomleft {
+  left: 0px;
+  bottom: 10px;
+}
+
+#gd-popup.centre {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#gd-popup.topcentre {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#gd-popup.bottomcentre {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#gd-popup-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 10px 10px !important;
   height: 100%;
   width: 100%;
-  top: 0px;
-  left: 0px;
-  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  padding: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  box-shadow: 5px 5px 7px 0 rgba(0, 0, 0, 0.5), 5px 5px 12px 0 rgba(0, 0, 0, 0.2);
 }
+
+#gd-popup-inner.popupDefault {
+  color: #000;
+  font-weight: 400;
+  background-color: #fff;
+  border: 1px solid #fff;
+}
+
+/*-----------------------------------
+  gdNotify
+------------------------------------*/
 
 #gd-notify {
   position: fixed;
@@ -52,21 +129,18 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 #gd-notify.topcentre {
   position: fixed;
   top: 10px;
   left: 50%;
-  transform: translateX(-50%);
 }
 
 #gd-notify.bottomcentre {
   position: fixed;
   bottom: 10px;
   left: 50%;
-  transform: translateX(-50%);
 }
 
 #gd-notify-inner {
@@ -79,7 +153,7 @@
   font-family: 'Times New Roman', Times, serif;
   font-size: 1rem;
   text-align: center;
-  box-shadow: 0 4px 10px 0 rgba(80, 80, 80, 0.4), 0 6px 15px 0 rgba(80, 80, 80, 0.2);
+  box-shadow: 5px 5px 7px 0 rgba(0, 0, 0, 0.6), 5px 5px 12px 0 rgba(0, 0, 0, 0.3);
 }
 
 #gd-notify-inner.successStyle {
@@ -140,8 +214,17 @@
   gdConfirm
 ------------------------------------*/
 
+#gd-confirm-backdrop, #gd-dialog-backdrop {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
 #gd-confirm {
-  position: absolute;
+  position: fixed;
   display: flex;
   padding: 0px 10px 0px 10px;
   height: auto;
@@ -177,24 +260,21 @@
 }
 
 #gd-confirm.centre {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 #gd-confirm.topcentre {
-  position: absolute;
+  position: fixed;
   top: 10px;
   left: 50%;
-  transform: translateX(-50%);
 }
 
 #gd-confirm.bottomcentre {
-  position: absolute;
+  position: fixed;
   bottom: 10px;
   left: 50%;
-  transform: translateX(-50%);
 }
 
 #gd-confirm-inner {
@@ -208,19 +288,24 @@
   padding: 5px;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
-  box-shadow: 0 4px 10px 0 rgba(80, 80, 80, 0.4), 0 6px 15px 0 rgba(80, 80, 80, 0.2);
+  box-shadow: 5px 5px 7px 0 rgba(0, 0, 0, 0.5), 5px 5px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
 #gd-confirm-inner #gd-exit {
   height: 10px;
+  /* color: rgb(212, 212, 212) */
 }
 
 #gd-confirm-inner #gd-exit span {
   float: right;
-  margin-top: -10px;
-  margin-right: -2px;
+  margin-top: -8px;
+  margin-right: -4px;
   color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
+}
+
+#gd-confirm-inner #gd-exit span i.fas {
+  font-size: 1.2rem;
 }
 
 #gd-confirm-inner.stdconfirm {
@@ -254,7 +339,7 @@
 ------------------------------------*/
 
 #gd-dialog {
-  position: absolute;
+  position: fixed;
   display: flex;
   padding: 0px 10px 0px 10px;
   height: auto;
@@ -285,24 +370,21 @@
 }
 
 #gd-dialog.centre {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 #gd-dialog.topcentre {
-  position: absolute;
+  position: fixed;
   top: 10px;
   left: 50%;
-  transform: translateX(-50%);
 }
 
 #gd-dialog.bottomcentre {
-  position: absolute;
+  position: fixed;
   bottom: 10px;
   left: 50%;
-  transform: translateX(-50%);
 }
 
 #gd-dialog-inner {
@@ -315,8 +397,8 @@
   border-radius: 5px;
   padding: 5px;
   font-family: Arial, Helvetica, sans-serif;
-  text-align: center;
-  box-shadow: 0 4px 10px 0 rgba(80, 80, 80, 0.4), 0 6px 15px 0 rgba(80, 80, 80, 0.2);
+  text-align: left;
+  box-shadow: 5px 5px 7px 0 rgba(0, 0, 0, 0.5), 5px 5px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
 #gd-dialog-inner #gd-dialog-title {
@@ -327,6 +409,7 @@
   position: relative;
   top: -6px;
   font-variant: small-caps;
+  text-align: center;
 }
 
 #gd-dialog-inner #gd-exit {
@@ -339,10 +422,14 @@
 
 #gd-dialog-inner #gd-exit span {
   float: right;
-  margin-top: -10px;
-  margin-right: -2px;
+  margin-top: -8px;
+  margin-right: -4px;
   color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
+}
+
+#gd-dialog-inner #gd-exit span i.fas {
+  font-size: 1.4rem;
 }
 
 #gd-dialog-inner.stddialog {
@@ -460,93 +547,142 @@
 }
 
 .gd-fadezoomIn {
-  animation-name: gdFadeZoom;
+  animation-name: gdFadeZoomIn;
   animation-duration: 0.5s;
 }
 
-.gd-fadezoomOut {
-  animation-name: gdFadeZoom;
-  animation-duration: 0.5s;
-  animation-direction: reverse;
-}
-
-.gd-fadezoomOutQuickly {
-  animation-name: gdFadeZoom;
-  animation-duration: 0.1s;
-  animation-direction: reverse;
-}
-
-@keyframes gdFadeZoom {
+@keyframes gdFadeZoomIn {
   0% {
-    transform: translate(-50%, -50%) scale(0.3);
-    -webkit-transform: translate(-50%, -50%) scale(0.3);
-    -moz-transform: translate(-50%, -50%) scale(0.3);
-    -ms-transform: translate(-50%, -50%) scale(0.3);
+    transform: scale(0.3);
+    -webkit-transform: scale(0.3);
+    -moz-transform: scale(0.3);
+    -ms-transform: scale(0.3);
     opacity: 0;
     visibility: visible;
   }
   100% {
-    transform: translate(-50%, -50%) scale(1);
-    -webkit-transform: translate(-50%, -50%) scale(1);
-    -moz-transform: translate(-50%, -50%) scale(1);
-    -ms-transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
     opacity: 1;
+    visibility: visible;
+  }
+}
+
+.gd-fadezoomOut {
+  animation-name: gdFadeZoomOut;
+  animation-duration: 0.5s;
+}
+
+.gd-fadezoomOutQuickly {
+  animation-name: gdFadeZoomOut;
+  animation-duration: 0.1s;
+}
+
+@keyframes gdFadeZoomOut {
+  0% {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    transform: scale(0.3);
+    -webkit-transform: scale(0.3);
+    -moz-transform: scale(0.3);
+    -ms-transform: scale(0.3);
+    opacity: 0;
     visibility: visible;
   }
 }
 
 .gd-slideInDown {
-  animation-name: gdSlideDown;
+  animation-name: gdSlideDownIn;
   animation-duration: 0.5s;
 }
 
-.gd-slideOutUp {
-  animation-name: gdSlideDown;
-  animation-duration: 0.5s;
-  animation-direction: reverse;
-}
-
-@keyframes gdSlideDown {
+@keyframes gdSlideDownIn {
   0% {
     top: -100px;
-    -webkit-transform: translate(-50%) scale(0.3) translate3d(0, -100%, 0);
-    transform: translate(-50%) scale(0.3) translate3d(0, -100%, 0);
+    -webkit-transform: scale(0.3) translate3d(0, -100%, 0);
+    transform: scale(0.3) translate3d(0, -100%, 0);
     opacity: 0;
     visibility: visible;
   }
   100% {
     top: 10px;
-    -webkit-transform: translate(-50%) scale(1) translate3d(0, 0, 0);
-    transform: translate(-50%) scale(1) translate3d(0, 0, 0);
+    -webkit-transform: scale(1) translate3d(0, 0, 0);
+    transform: scale(1) translate3d(0, 0, 0);
     opacity: 1;
+    visibility: visible;
+  }
+}
+
+.gd-slideOutUp {
+  animation-name: gdSlideDownOut;
+  animation-duration: 0.5s;
+}
+
+@keyframes gdSlideDownOut {
+  0% {
+    top: 10px;
+    -webkit-transform: scale(1) translate3d(0, 0, 0);
+    transform: scale(1) translate3d(0, 0, 0);
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    top: -100px;
+    -webkit-transform: scale(0.3) translate3d(0, -100%, 0);
+    transform: scale(0.3) translate3d(0, -100%, 0);
+    opacity: 0;
     visibility: visible;
   }
 }
 
 .gd-slideInUp {
-  animation-name: gdSlideUp;
+  animation-name: gdSlideUpIn;
   animation-duration: 0.5s;
 }
 
-.gd-slideOutDown {
-  animation-name: gdSlideUp;
-  animation-duration: 0.5s;
-  animation-direction: reverse;
-}
-
-@keyframes gdSlideUp {
+@keyframes gdSlideUpIn {
   0% {
     bottom: -100px;
-    -webkit-transform: translate(-50%) scale(0.3);
-    transform: translate(-50%) scale(0.3);
+    -webkit-transform: scale(0.3);
+    transform: scale(0.3);
     opacity: 0;
     visibility: visible;
   }
   100% {
     bottom: 10px;
-    -webkit-transform: translate(-50%) scale(1);
-    transform: translate(-50%) scale(1);
+    -webkit-transform: scale(1);
+    transform: scale(1);
     opacity: 1;
+    visibility: visible;
+  }
+}
+
+.gd-slideOutDown {
+  animation-name: gdSlideUpOut;
+  animation-duration: 0.5s;
+}
+
+@keyframes gdSlideUpOut {
+  0% {
+    bottom: 10px;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    bottom: -100px;
+    -webkit-transform: scale(0.3);
+    transform: scale(0.3);
+    opacity: 0;
     visibility: visible;
   }
 }
@@ -559,41 +695,42 @@
   font-size: 0.9rem;
 }
 
-#gd-simple-event-bf label {
+#gd-cal-event label {
   width: 100%;
+  margin-bottom: 0.1rem;
 }
 
-#gd-simple-event-bf .form .row {
+#gd-cal-event .form .row {
   margin-bottom: 5px;
 }
 
-#gd-simple-event-bf .form-group {
+#gd-cal-event .form-group {
   margin-bottom: 0.3rem;
 }
 
-#gd-simple-event-bf .gd-fas-cal {
+#gd-cal-event .gd-fas-cal {
   max-width: 50px;
 }
 
-#gd-simple-event-bf .fa-calendar-alt {
+#gd-cal-event .fa-calendar-alt {
   padding-top: 3px;
   font-size: 1.9rem;
   color: #6f6f6f;
 }
 
-#gd-simple-event-bf .gd-to {
+#gd-cal-event .gd-to {
   font-size: 1.0rem;
 }
 
-#gd-simple-event-bf .gd-date-pair input {
+#gd-cal-event .gd-date-pair input {
   display: inline-block;
 }
 
-#gd-simple-event-bf .gd-ul-color {
+#gd-cal-event .gd-ul-color {
   padding-left: 0px;
 }
 
-#gd-simple-event-bf .gd-li-color {
+#gd-cal-event .gd-li-color {
   /* display: block; */
   width: 20px;
   height: 20px;
@@ -610,26 +747,26 @@
   border-color: orangered !important;
 }
 
-#gd-simple-event-bf .gd-li-black {
+#gd-cal-event .gd-li-black {
   background-color: black;
 }
 
-#gd-simple-event-bf .gd-li-blue {
+#gd-cal-event .gd-li-blue {
   background-color: blue;
 }
 
-#gd-simple-event-bf .gd-li-green {
+#gd-cal-event .gd-li-green {
   background-color: green;
 }
 
-#gd-simple-event-bf .gd-li-red {
+#gd-cal-event .gd-li-red {
   background-color: red;
 }
 
-#gd-simple-event-bf .gd-li-yellow {
+#gd-cal-event .gd-li-yellow {
   background-color: yellow;
 }
 
-#gd-simple-event-bf .gd-li-grey {
+#gd-cal-event .gd-li-grey {
   background-color: grey;
 }

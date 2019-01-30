@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
   var frmCalEvent = '\
-  <div id="gd-simple-event-bf">\
+  <div id="gd-cal-event">\
   <div class="modal-body">\
     <div class="container py-1">\
       <div class="row">\
@@ -80,12 +80,13 @@ $(document).ready(function () {
     }
   });
 
-  $("#msgSelDisplay").on("click", function () {
+  $("#msgSelDisplay").on("click", function (jqEvent) {
     var msgtype = "";
     var notifytype = "";
     var position = "";
     var width = "auto";
     var animation = true;
+    var audio = true;
 
     msgtype = $("#msgtype option:selected").val();
     if (msgtype == "notify") {
@@ -94,22 +95,25 @@ $(document).ready(function () {
     position = $("#msgposition option:selected").val();
     width = $("#msgwidth option:selected").val();
     animation = ($("#msganimation option:selected").val() == "true");
+    audio = ($("#msgaudio option:selected").val() == "true");
 
     var d = new Date();
 
     switch (msgtype) {
       case "notify":
-        gdMessages.notify({
+        gdMessages.notify.open({
           msg: 'Record has been updated',
           className: notifytype,
           width: width,
           position: position,
-          animation: animation
+          animation: animation,
+          audio: audio,
+          autoClose: false
         });
         break;
 
       case "confirm":
-        gdMessages.confirm({
+        gdMessages.confirm.open({
           msg: 'Record has been updated',
           className: 'stdconfirm',
           width: width,
@@ -123,7 +127,7 @@ $(document).ready(function () {
           afterClose: function (result) {
             switch (result) {
               case "ok":
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: "You clicked OK",
                   closeAfter: {
                     time: 3,
@@ -134,7 +138,7 @@ $(document).ready(function () {
                 });
                 break;
               case "cancel":
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: "You clicked Cancel",
                   closeAfter: {
                     time: 3,
@@ -145,7 +149,7 @@ $(document).ready(function () {
                 });
                 break;
               case "other":
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: "You clicked Other",
                   closeAfter: {
                     time: 3,
@@ -156,7 +160,7 @@ $(document).ready(function () {
                 });
                 break;
               default:
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: "Request for Confirmation timed out!",
                   closeAfter: {
                     time: 5,
@@ -171,10 +175,10 @@ $(document).ready(function () {
         break;
 
       case "dialog":
-        gdMessages.dialog({
+        gdMessages.dialog.open({
           title: "Contractor Details",
           msg: frmCalEvent,
-          returnSelector: "#gd-simple-event-bf",
+          returnSelector: "#gd-cal-event",
           width: width,
           position: position,
           animation: animation,
@@ -182,11 +186,13 @@ $(document).ready(function () {
             className: 'btn btn-warning',
             label: 'Save Copy'
           },
-          beforeClose: gdFormValidation,
+          beforeClose: function ($data) {
+            gdFormValidation($data)
+          },
           afterClose: function (result, $data) {
             switch (result) {
               case "ok":                   // do the OK/Save processing
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: "You clicked OK - record saved",
                   closeAfter: {
                     time: 3,
@@ -199,7 +205,7 @@ $(document).ready(function () {
               case "cancel":               // do the cancel processing
                 console.log($data);
 
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: "You clicked Cancel",
                   closeAfter: {
                     time: 3,
@@ -210,7 +216,7 @@ $(document).ready(function () {
                 });
                 break;
               case "other":                // do the custom alternative processing
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: "You clicked Save Copy",
                   closeAfter: {
                     time: 3,
@@ -221,7 +227,7 @@ $(document).ready(function () {
                 });
                 break;
               default:
-                gdMessages.notify({
+                gdMessages.notify.open({
                   msg: "You took too long, so I closed!",
                   closeAfter: {
                     time: 5,
@@ -241,20 +247,20 @@ $(document).ready(function () {
   $(document).on("keydown", function (jsEvent) {
     if (jsEvent.keyCode == 27) {
       if ($("#gd-notify").length) {
-        gdMessages.closeNotify();
+        gdMessages.notify.close();
       }
       if ($("#gd-confirm").length) {
-        gdMessages.closeConfirm();
+        gdMessages.confirm.close();
       }
       if ($("#gd-dialog").length) {
-        gdMessages.closeDialog();
+        gdMessages.dialog.close();
       }
     }
   });
 
-  function gdFormValidation() {
+  function gdFormValidation($data) {
     console.log('Validating');
-    $data = $("#gd-simple-event-bf");
+    // $data = $("#gd-cal-event");
     var $form = $data.find(".form");
     var title = $form.find("#title").val();
     var startDate = $form.find("#gd-start-date").val();
@@ -268,6 +274,6 @@ $(document).ready(function () {
     console.log(endDate);
     console.log(endTime);
     console.log(desc);
-    return true;
+    return false;
   }
 });
