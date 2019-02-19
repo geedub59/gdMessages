@@ -5,10 +5,43 @@
 
 var gdMessages = {
 
-    version: "1.1",
+    windowResize: function () {
 
-    bodyOverflow: "",
-    resetBO: false,
+        if (gdMessages.notify.inPlay) {
+            gdMessages.resizeMessage($('#gd-notify'), gdMessages.notify.options.dir);
+        }
+        if (gdMessages.confirm.inPlay) {
+            gdMessages.resizeMessage($('#gd-confirm'), gdMessages.confirm.options.dir);
+        }
+        if (gdMessages.dialog.inPlay) {
+            gdMessages.resizeMessage($('#gd-dialog'), gdMessages.dialog.options.dir);
+        }
+    },
+
+    resizeMessage: function ($obj, dir) {
+        var viewportW = document.documentElement.clientWidth - 22;
+        var viewportH = document.documentElement.clientHeight;
+
+        var top = ((viewportH / 2) - ($obj.height() / 2));
+        var left = ((viewportW / 2) - ($obj.width() / 2));
+
+        if (dir == "centre") {
+            $obj.css({
+                top: top + "px",
+                left: left + "px"
+            });
+        } else if (dir == "topcentre") {
+            $obj.css({
+                left: left + "px"
+            });
+        } else if (dir == "bottomcentre") {
+            $obj.css({
+                left: left + "px"
+            });
+        }
+    },
+
+    version: "1.1",
 
     maxZ: function () {
         var zindex = Math.max.apply(null,
@@ -98,8 +131,8 @@ var gdMessages = {
 
             var posObj = {};
             if (position == "coords") {
-                var viewportW = window.innerWidth;
-                var viewportH = window.innerHeight;
+                var viewportW = document.documentElement.clientWidth - 22;
+                var viewportH = document.documentElement.clientHeight;
 
                 if (options.cursorPos.cursorX < (viewportW / 2)) {
                     if (options.cursorPos.cursorY < (viewportH / 2)) {
@@ -371,9 +404,8 @@ var gdMessages = {
             var $gdNotify = $('#gd-notify');
 
             // adjust the top/left position of the notification
-            var viewportW = window.innerWidth;
-            if (window.scrollbars.visible) { viewportW -= 17; }
-            var viewportH = window.innerHeight;
+            var viewportW = document.documentElement.clientWidth - 22;
+            var viewportH = document.documentElement.clientHeight;
 
             var top = (viewportH / 2) - ($gdNotify.height() / 2);
             var left = (viewportW / 2) - ($gdNotify.width() / 2);
@@ -656,9 +688,8 @@ var gdMessages = {
             var $gdConfirm = $('#gd-confirm');
 
             // adjust the top/left position of the confirmation
-            var viewportW = window.innerWidth;
-            if (window.scrollbars.visible) { viewportW -= 17; }
-            var viewportH = window.innerHeight;
+            var viewportW = document.documentElement.clientWidth - 22;
+            var viewportH = document.documentElement.clientHeight;
 
             var top = (viewportH / 2) - ($gdConfirm.height() / 2);
             var left = (viewportW / 2) - ($gdConfirm.width() / 2);
@@ -974,9 +1005,8 @@ var gdMessages = {
             var $gdDialog = $('#gd-dialog');
 
             // adjust the top/left position of the dialog
-            var viewportW = window.innerWidth;
-            if (window.scrollbars.visible) { viewportW -= 17; }
-            var viewportH = window.innerHeight;
+            var viewportW = document.documentElement.clientWidth - 22;
+            var viewportH = document.documentElement.clientHeight;
 
             var top = (viewportH / 2) - ($gdDialog.height() / 2);
             var left = (viewportW / 2) - ($gdDialog.width() / 2);
@@ -1044,7 +1074,7 @@ var gdMessages = {
                         var res = options.otherBtn.onClick($gdDialog);
                         if (res) removeDialog("other");
                     } else {
-                        removeConfirm("other");
+                        removeDialog("other");
                     }
                 });
             }
@@ -1114,14 +1144,15 @@ var gdMessages = {
 
 }
 
+
 $(document).ready(function () {
     let audioHtml = '\
-    <audio id = "audio-XXXXXX" style = "display: none;" >\
-        <source src="http://www.stratacaresolutions.com.au/sounds/XXXXXX.mp3" type="audio/mpeg">\
-        <source src="httpo://www.stratacaresolutions.com.au/sounds/XXXXXX.wav" type="audio/wav">\
-        <!-- Your browser does not support the audio element. -->\
-    </audio>\
-    ';
+      <audio id = "audio-XXXXXX" style = "display: none;" >\
+          <source src="http://www.stratacaresolutions.com.au/sounds/XXXXXX.mp3" type="audio/mpeg">\
+          <source src="httpo://www.stratacaresolutions.com.au/sounds/XXXXXX.wav" type="audio/wav">\
+          <!-- Your browser does not support the audio element. -->\
+      </audio>\
+      ';
     var audioRegex = /XXXXXX/g;
     let audioSuccessHtml = audioHtml.replace(audioRegex, "success");
     let audioInfoHtml = audioHtml.replace(audioRegex, "info");
@@ -1130,42 +1161,6 @@ $(document).ready(function () {
 
     $("body").append(audioSuccessHtml).append(audioInfoHtml).append(audioWarningHtml).append(audioErrorHtml);
 
-    $(window).on("resize", windowResize);
-
-    function windowResize() {
-        if (gdMessages.notify.inPlay) {
-            resize_gdMesages($('#gd-notify'), gdMessages.notify.options.dir);
-        }
-        if (gdMessages.confirm.inPlay) {
-            resize_gdMesages($('#gd-confirm'), gdMessages.confirm.options.dir);
-        }
-        if (gdMessages.dialog.inPlay) {
-            resize_gdMesages($('#gd-dialog'), gdMessages.dialog.options.dir);
-        }
-    }
-
-    function resize_gdMesages($obj, dir) {
-        var viewportW = window.innerWidth;
-        if (window.scrollbars.visible) { viewportW -= 17; }
-        var viewportH = window.innerHeight;
-
-        var top = ((viewportH / 2) - ($obj.height() / 2));
-        var left = ((viewportW / 2) - ($obj.width() / 2));
-
-        if (dir == "centre") {
-            $obj.css({
-                top: top + "px",
-                left: left + "px"
-            });
-        } else if (dir == "topcentre") {
-            $obj.css({
-                left: left + "px"
-            });
-        } else if (dir == "bottomcentre") {
-            $obj.css({
-                left: left + "px"
-            });
-        }
-    }
+    $(window).on("resize", gdMessages.windowResize);
 
 });
